@@ -313,15 +313,12 @@ def evaluate(x_str="",
              bias_gamma=[3, 3, 3, 3, 3, 1, 1, 3, 10, 4, 4, 4, 4, 4, 4],
              valiables=50):
   try:
-    _logger.info('Start')
     result = main(x_str=x_str,
                   bias_alpha=bias_alpha,
                   bias_beta=bias_beta,
                   bias_gamma=bias_gamma,
                   valiables=valiables)   # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
-    _logger.info('Successfully finished')
   except Exception as e:
-    _logger.error(format_exc())
     result = {
         'objective': None,
         'constraint': None,
