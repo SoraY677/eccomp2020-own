@@ -283,11 +283,11 @@ def print_json(dic, indent=None):
 
 
 def main(
-    x_str="",
-    bias_alpha=[2, 2, 2, 2, 2, 27, 5, 0, 0, 1, 0, 0, 1, 0, 0],
-    bias_beta=[5, 5, 5, 5, 5, 30, 8, 1, 0, 3, 0, 1, 2, 0, 0],
-    bias_gamma=[3, 3, 3, 3, 3, 1, 1, 3, 10, 4, 4, 4, 4, 4, 4],
-        valiables=50):
+        x_str,
+        bias_alpha,
+        bias_beta,
+        bias_gamma,
+        valiables):
 
   feature_funcs = [f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15]
   errs = [None] + [  # The first element is a placeholder to make index start with 1
@@ -307,23 +307,36 @@ def main(
 
   objs = [f(i, x) for i in [[j for j in range(1, 16)]]]
   cons = [g(d, x, [0.1], [0.9]) for i, d in enumerate([j for j in range(1, 13)])]
-  print_json({
+  return {
       'objective': None if len(objs) == 0 else objs[0] if len(objs) == 1 else objs,
       'constraint': None if len(cons) == 0 else cons[0] if len(cons) == 1 else cons,
       'error': None
-  })
+  }
 
 
-if __name__ == "__main__":
+def evaluate(x_str="",
+             bias_alpha=[2, 2, 2, 2, 2, 27, 5, 0, 0, 1, 0, 0, 1, 0, 0],
+             bias_beta=[5, 5, 5, 5, 5, 30, 8, 1, 0, 3, 0, 1, 2, 0, 0],
+             bias_gamma=[3, 3, 3, 3, 3, 1, 1, 3, 10, 4, 4, 4, 4, 4, 4],
+             valiables=50):
   try:
     _logger.info('Start')
-    main(auto_envvar_prefix="RNGBIAS")   # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
+    result = main(x_str=x_str,
+                  bias_alpha=bias_alpha,
+                  bias_beta=bias_beta,
+                  bias_gamma=bias_gamma,
+                  valiables=valiables)   # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
     _logger.info('Successfully finished')
   except Exception as e:
     _logger.error(format_exc())
-    print_json({
+    result = {
         'objective': None,
         'constraint': None,
         'error': str(e)
-    })
-    sys.exit(1)
+    }
+  return result
+
+
+if __name__ == "__main__":
+  evaluate()
+  sys.exit(1)
