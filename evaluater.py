@@ -1,16 +1,13 @@
 #!/bin/env python
 import json
-import logging
 import os
 import sys
 from traceback import format_exc
 
-import click
 from jsonschema import validate, ValidationError
 from scipy.stats import chi2
 import yaml
 
-_logger = logging.getLogger(__name__)
 
 variable_jsonschema_template = """{
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -276,10 +273,6 @@ def json_list(ctx, param, value):
   if type(value) is not list:
     ctx.fail("Invalid option: %s=%s, which must be list or str." % (param.name, value))
   return value
-
-
-def print_json(dic, indent=None):
-  click.echo(json.dumps(dic, indent=indent))
 
 
 def main(
