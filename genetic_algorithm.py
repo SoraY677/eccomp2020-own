@@ -12,9 +12,10 @@ class GenetictAlgorithm:
           self,
           ITERATE,
           SOLUTION_SIZE,
+          ELITE_NUM=1,
           POP_NUM=10,
           MUTATE_PROB=0.01,
-          CROSSOVER_NUM=1):
+          CROSSOVER_NUM=1,):
     '''
     設定
     - @param {Integer} ITERATE 世代交代数
@@ -40,7 +41,6 @@ class GenetictAlgorithm:
     self.beta = beta
     self.population = []
 
-    self.objective_max = 0  # 解集団のうち最も評価値の大きい(悪い)値
     for popi in range(self.POP_NUM):
       # 制約条件を満たす解を用意
       while True:  # それまでループ
@@ -52,11 +52,10 @@ class GenetictAlgorithm:
               'x': pop,
               'objective': objective
           })
-          # 最大値を更新する
-          if self.objective_max < objective:
-            self.objective_max = objective
           break
-    self.objective_max += 1
+
+    # 評価値で昇順ソートしておく
+    self.population = sorted(self.population, key=lambda pop: pop['objective'])
 
   def select(self):
     '''
@@ -66,10 +65,11 @@ class GenetictAlgorithm:
 
     # 解集団の合計点数を出しておく
     objective_sum = 0
+    objective_max = self.population[-1]['objective']
     for pop in self.population:
       # 点数が最も低いもの(最良解)から降順になるように
       # 最も高いobjective-各解のobjectiveをして評価値を逆にする
-      reverse_objective = self.objective_max - pop['objective']
+      reverse_objective = objective_max - pop['objective']
       population_reverse.append({
           'x': pop['x'],
           'objective': reverse_objective
@@ -94,8 +94,8 @@ class GenetictAlgorithm:
   def crossover(self, individual1, individual2):
     '''
     交叉
-    - @param {str} 交叉対象となる解1
-    - @param {str} 交叉対象となる解2
+    - @param {str} individual1 交叉対象となる解1
+    - @param {str} individual2 交叉対象となる解2
     '''
     # 交叉点を決める配列を生成
     pos_list = [i for i in range(1, self.SOLUTION_SIZE)]  # [::self.CROSSOVER_NUM]
@@ -118,13 +118,19 @@ class GenetictAlgorithm:
 
     return new_x
 
-  def mutate(self):
-    pass
+  def mutate(self, individual):
+    '''
+    突然変異
+    - @param {str} individual 突然変異対象の解
+    '''
+    new_x = ''
+    for i in len(individual):
+      if random.random() < self.MUTATE_PROB:
+        new_x += random.randint(1, 6)
+      else:
+        new_x += individual[i]
 
-  def run(self):
-    '''
-    '''
-    pass
+    return new_x
 
 
 if __name__ == "__main__":
