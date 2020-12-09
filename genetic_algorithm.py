@@ -1,4 +1,5 @@
 import random
+import copy
 import evaluater as eval
 
 
@@ -7,7 +8,13 @@ class GenetictAlgorithm:
   遺伝的アルゴリズム
   '''
 
-  def __init__(self, ITERATE, SOLUTION_SIZE, POP_NUM=10, MUTATE_PROB=0.01):
+  def __init__(
+          self,
+          ITERATE,
+          SOLUTION_SIZE,
+          POP_NUM=10,
+          MUTATE_PROB=0.01,
+          CROSSOVER_NUM=1):
     '''
     設定
     - @param {Integer} ITERATE 世代交代数
@@ -17,8 +24,9 @@ class GenetictAlgorithm:
     '''
     self.ITERATE = ITERATE
     self.POP_NUM = POP_NUM
-    self.SOLUTION_NUM = SOLUTION_SIZE
+    self.SOLUTION_SIZE = SOLUTION_SIZE
     self.MUTATE_PROB = MUTATE_PROB
+    self.CROSSOVER_NUM = CROSSOVER_NUM
 
     pass
 
@@ -36,7 +44,7 @@ class GenetictAlgorithm:
     for popi in range(self.POP_NUM):
       # 制約条件を満たす解を用意
       while True:  # それまでループ
-        pop = ''.join([str(random.randint(1, 6)) for i in range(self.SOLUTION_NUM)])
+        pop = ''.join([str(random.randint(1, 6)) for i in range(self.SOLUTION_SIZE)])
         result = eval.evaluate(x_str=pop, bias_alpha=self.alpha, bias_beta=self.beta, mode="constraint", valiables=len(pop))
         if result.count(0) == len(result):
           objective = eval.evaluate(x_str=pop, bias_alpha=self.alpha, bias_beta=self.beta, valiables=len(pop))
@@ -44,6 +52,7 @@ class GenetictAlgorithm:
               'x': pop,
               'objective': objective
           })
+          # 最大値を更新する
           if self.objective_max < objective:
             self.objective_max = objective
           break
@@ -82,12 +91,32 @@ class GenetictAlgorithm:
           break
     return result
 
-  def crossover(self, pos_num):
+  def crossover(self, individual1, individual2):
     '''
     交叉
-    - @param {Integer} pos_num 交叉点の数
+    - @param {str} 交叉対象となる解1
+    - @param {str} 交叉対象となる解2
     '''
-    pass
+    # 交叉点を決める配列を生成
+    pos_list = [i for i in range(1, self.SOLUTION_SIZE)]  # [::self.CROSSOVER_NUM]
+    random.shuffle(pos_list)
+    pos_list = pos_list[:self.CROSSOVER_NUM]
+    pos_list.sort()
+
+    target = 0  # 対象となる解候補 / 最初は1
+    target_list = [individual1, individual2]
+    target_index = 0  # 探索対象となる交叉点配列の要素
+    new_x = ""
+    for i in range(self.SOLUTION_SIZE):
+      if target_index < len(pos_list):  # オーバーフロー対策
+        # 交叉点に行き着いたら反転
+        if i == pos_list[target_index]:
+          target = (target + 1) % 2
+          target_index += 1
+      # 解を生成
+      new_x += target_list[target][i]
+
+    return new_x
 
   def mutate(self):
     pass
@@ -99,12 +128,15 @@ class GenetictAlgorithm:
 
 
 if __name__ == "__main__":
+
   sample = GenetictAlgorithm(
       ITERATE=1000,
-      SOLUTION_SIZE=60
+      SOLUTION_SIZE=60,
+      CROSSOVER_NUM=3
   )
   sample.initialise(
       alpha=[2, 2, 2, 2, 2, 27, 5, 0, 0, 1, 0, 0, 1, 0, 0],
       beta=[5, 5, 5, 5, 5, 30, 8, 1, 0, 3, 0, 1, 2, 0, 0])
 
-  sample.select()
+  select = sample.select()
+  sample.crossover(select[0], select[1])
