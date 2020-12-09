@@ -127,8 +127,6 @@ class HarmonySearch:
     @return {String} 探索結果の文字列
     '''
     self.initalize(alpha=alpha, beta=beta)
-    print(alpha)
-    print(beta)
     for i in range(self.ITERATION):
       self.renew()
 
