@@ -280,44 +280,50 @@ def main(
         bias_alpha,
         bias_beta,
         bias_gamma,
-        valiables):
+        valiables,
+        mode):
 
-  feature_funcs = [f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15]
-  errs = [None] + [  # The first element is a placeholder to make index start with 1
-      make_error_function(
-          feature_funcs[i],
-          bias_alpha[i],
-          bias_beta[i],
-          bias_gamma[i]
-      ) for i in range(15)]
-
-  def f(ixs, x):
-    return sum(errs[i](x) for i in ixs)
-
-  # x_str = kwargs['file'].readline()
+  # 入力取得
   x = json.loads(x_str)
   validate(x, variable_jsonschema(valiables))
 
-  objs = [f(i, x) for i in [[j for j in range(1, 16)]]]
-  cons = [g(d, x, [0.1], [0.9]) for i, d in enumerate([j for j in range(1, 13)])]
-  return {
-      'objective': None if len(objs) == 0 else objs[0] if len(objs) == 1 else objs,
-      'constraint': None if len(cons) == 0 else cons[0] if len(cons) == 1 else cons,
-      'error': None
-  }
+  # 目的関数
+  if mode == "objective":
+    feature_funcs = [f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15]
+    errs = [None] + [  # The first element is a placeholder to make index start with 1
+        make_error_function(
+            feature_funcs[i],
+            bias_alpha[i],
+            bias_beta[i],
+            bias_gamma[i]
+        ) for i in range(15)]
+
+    def f(ixs, x):
+      return sum(errs[i](x) for i in ixs)
+
+    objs = [f(i, x) for i in [[j for j in range(1, 16)]]]
+    return None if len(objs) == 0 else objs[0] if len(objs) == 1 else objs
+
+  # 制約関数
+  elif mode == "constraint":
+    cons = [g(d, x, 0.1, 0.9) for i, d in enumerate([j for j in range(1, 13)])]
+    return None if len(cons) == 0 else cons[0] if len(cons) == 1 else cons
 
 
 def evaluate(x_str="",
              bias_alpha=[2, 2, 2, 2, 2, 27, 5, 0, 0, 1, 0, 0, 1, 0, 0],
              bias_beta=[5, 5, 5, 5, 5, 30, 8, 1, 0, 3, 0, 1, 2, 0, 0],
              bias_gamma=[3, 3, 3, 3, 3, 1, 1, 3, 10, 4, 4, 4, 4, 4, 4],
-             valiables=50):
+             valiables=50,
+             mode="objective"):
+  x = '"' + x_str + '"'
   try:
-    result = main(x_str=x_str,
+    result = main(x_str=x,
                   bias_alpha=bias_alpha,
                   bias_beta=bias_beta,
                   bias_gamma=bias_gamma,
-                  valiables=valiables)   # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
+                  valiables=valiables,
+                  mode=mode)   # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
   except Exception as e:
     result = {
         'objective': None,
