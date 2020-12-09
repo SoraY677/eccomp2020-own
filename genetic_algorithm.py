@@ -173,7 +173,9 @@ class GenetictAlgorithm:
 
 
 if __name__ == "__main__":
-
+  '''
+  使用例
+  '''
   sample = GenetictAlgorithm(
       ITERATE=30,
       SOLUTION_SIZE=60,
