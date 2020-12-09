@@ -28,13 +28,13 @@ class Harmony:
     # 制約条件を満たす解を生成
     while True:
       x = "".join([str(random.randint(1, 6)) for i in range(length)])
-      result = eval.evaluate(x_str=x, mode="constraint", bias_alpha=alpha, bias_beta=beta)
+      result = eval.evaluate(x_str=x, mode="constraint", bias_alpha=alpha, bias_beta=beta, valiables=len(x))
       if result.count(0) == len(result):
         break
     # 結果
     self.value = {
         "x": x,
-        "objective": eval.evaluate(x_str=x, bias_alpha=alpha, bias_beta=beta)
+        "objective": eval.evaluate(x_str=x, bias_alpha=alpha, bias_beta=beta, valiables=len(x))
     }
 
   def renew(self, length, origin_harmony_list, alpha, beta, change_count=1):
@@ -67,13 +67,13 @@ class Harmony:
           # ランダムな継承
           newx = newx + str(random.randint(1, 6))
 
-      result = eval.evaluate(x_str=newx, mode="constraint", bias_alpha=alpha, bias_beta=beta)
+      result = eval.evaluate(x_str=newx, mode="constraint", bias_alpha=alpha, bias_beta=beta, valiables=len(newx))
       if result.count(0) == len(result):
         break
 
     self.value = {
         "x": newx,
-        "objective": eval.evaluate(x_str=newx, bias_alpha=alpha, bias_beta=beta)
+        "objective": eval.evaluate(x_str=newx, bias_alpha=alpha, bias_beta=beta, valiables=len(newx))
     }
 
 
