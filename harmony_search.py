@@ -78,22 +78,27 @@ class Harmony:
 
 
 class HarmonySearch:
-  def __init__(self, SOL_LENGTH, alpha, beta, ITERATION=1000, HARMONY_NUM=10):
+  def __init__(self, SOL_LENGTH, ITERATION=1000, HARMONY_NUM=10):
     '''
-    初期化
-    - @param {Integer} SOL_LENGTH 解の長さ  
-    - @param {Array} alpha
-    - @param {Array} beta
+    設定
+    - @param {Integer} SOL_LENGTH 解の長さ
     - @param {Integer} ITERATION 解探索のループ回数
     - @param {Integer} HARMONY_NUM ハーモニーの数
     '''
     self.harmony_list = [Harmony() for i in range(HARMONY_NUM)]
-    self.alpha = alpha
-    self.beta = beta
     self.SOL_LENGTH = SOL_LENGTH
     self.ITERATION = ITERATION
+
+  def initalize(self, alpha, beta):
+    '''
+    初期化
+    - @param {float} alpha
+    - @param {float} beta
+    '''
+    self.alpha = alpha
+    self.beta = beta
     for harmony in self.harmony_list:
-      harmony.generate(length=self.SOL_LENGTH, alpha=self.alpha, beta=self.beta)
+      harmony.generate(length=self.SOL_LENGTH, alpha=alpha, beta=beta)
 
   def renew(self):
     '''
@@ -116,11 +121,14 @@ class HarmonySearch:
     if self.harmony_list[worst_index].value["objective"] > new_harmony.value["objective"]:
       self.harmony_list[worst_index] = new_harmony
 
-  def run(self):
+  def run(self, alpha, beta):
     '''
     解探索を実行する
-    @return {Str} 探索結果の文字列
+    @return {String} 探索結果の文字列
     '''
+    self.initalize(alpha=alpha, beta=beta)
+    print(alpha)
+    print(beta)
     for i in range(self.ITERATION):
       self.renew()
 
@@ -150,13 +158,13 @@ class HarmonySearch:
 if __name__ == "__main__":
   sample = HarmonySearch(
       SOL_LENGTH=50,
-      alpha=[2, 2, 2, 2, 2, 27, 5, 0, 0, 1, 0, 0, 1, 0, 0],
-      beta=[5, 5, 5, 5, 5, 30, 8, 1, 0, 3, 0, 1, 2, 0, 0],
       ITERATION=10000,
       HARMONY_NUM=30
   )
   sample.show_result("origin")
-  result = sample.run()
+  result = sample.run(
+      alpha=[2, 2, 2, 2, 2, 27, 5, 0, 0, 1, 0, 0, 1, 0, 0],
+      beta=[5, 5, 5, 5, 5, 30, 8, 1, 0, 3, 0, 1, 2, 0, 0],)
   sample.show_result("after")
   print("最良解：")
   print(result)
