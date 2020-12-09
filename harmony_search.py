@@ -12,7 +12,7 @@ class Harmony:
     '''
     初期化
     - @param {float} R_A 選択比率
-    - @param {float} R_P 値調整比率 
+    - @param {float} R_P 値調整比率
     '''
     self.R_A = R_A
     self.R_P = R_P
@@ -21,7 +21,7 @@ class Harmony:
     '''
     解を生成
     - @param {Integer} length 解の長さ
-    - @param {Array} alpha 
+    - @param {Array} alpha
     - @param {Array} beta
 
     '''
@@ -40,31 +40,36 @@ class Harmony:
   def renew(self, length, origin_harmony_list, alpha, beta, change_count=1):
     '''
     解の作り変え
-    - @param {Integer} length, 
+    - @param {Integer} length,
     - @param {Array} origin_harmony_list 変更前となるharmonyのリスト
-    - @param {Array} alpha 
+    - @param {Array} alpha
     - @param {Array} beta
     - @param {Number} change_count
     '''
-    # 新規解
-    newx = ""
 
     # 対象となる解を決定
     r = random.randint(0, len(origin_harmony_list) - 1)
-    for i in range(length):
-      if random.random() < self.R_A:
-        if random.random() < self.R_P:
-          # 既存の解を継承
-          newx = newx + origin_harmony_list[r].value["x"][i]
+    while True:
+      # 新規解
+      newx = ""
+      for i in range(length):
+        if random.random() < self.R_A:
+          if random.random() < self.R_P:
+            # 既存の解を継承
+            newx = newx + origin_harmony_list[r].value["x"][i]
+          else:
+            # 既存の解をすこし変更して継承
+            add_num = (int(origin_harmony_list[r].value["x"][i]) - 1 + random.randint(-3, 3)) % 6 + 1
+            if add_num < 0:
+              add_num += 6
+            newx = newx + str(add_num)
         else:
-          # 既存の解をすこし変更して継承
-          add_num = (int(origin_harmony_list[r].value["x"][i]) - 1 + random.randint(-3, 3)) % 6 + 1
-          if add_num < 0:
-            add_num += 6
-          newx = newx + str(add_num)
-      else:
-        # ランダムな継承
-        newx = newx + str(random.randint(1, 6))
+          # ランダムな継承
+          newx = newx + str(random.randint(1, 6))
+
+      result = eval.evaluate(x_str=newx, mode="constraint", bias_alpha=alpha, bias_beta=beta)
+      if result.count(0) == len(result):
+        break
 
     self.value = {
         "x": newx,
