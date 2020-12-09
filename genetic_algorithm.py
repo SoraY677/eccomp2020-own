@@ -15,21 +15,22 @@ class GenetictAlgorithm:
           ELITE_NUM=1,
           POP_NUM=10,
           MUTATE_PROB=0.01,
-          CROSSOVER_NUM=1,):
+          CROSSOVER_NUM=1):
     '''
     設定
     - @param {Integer} ITERATE 世代交代数
     - @param {Integer} SOLUTION_SIZE 解の長さ
+    - @param {Integer} ELITE_NUM エリート保存方式の対象数
     - @param {Integer} POP_NUM 解集団の数
     - @param {float} MUTATE_PROB 突然変異の確率
+    - @param {Integer} CROSSOVER_NUM 交叉点の数
     '''
     self.ITERATE = ITERATE
     self.POP_NUM = POP_NUM
     self.SOLUTION_SIZE = SOLUTION_SIZE
     self.MUTATE_PROB = MUTATE_PROB
     self.CROSSOVER_NUM = CROSSOVER_NUM
-
-    pass
+    self.ELITE_NUM = ELITE_NUM
 
   def initialise(self, alpha, beta):
     '''
@@ -69,7 +70,7 @@ class GenetictAlgorithm:
     for pop in self.population:
       # 点数が最も低いもの(最良解)から降順になるように
       # 最も高いobjective-各解のobjectiveをして評価値を逆にする
-      reverse_objective = objective_max - pop['objective']
+      reverse_objective = objective_max - pop['objective'] + 1
       population_reverse.append({
           'x': pop['x'],
           'objective': reverse_objective
@@ -124,25 +125,61 @@ class GenetictAlgorithm:
     - @param {str} individual 突然変異対象の解
     '''
     new_x = ''
-    for i in len(individual):
+    for i in range(len(individual)):
       if random.random() < self.MUTATE_PROB:
-        new_x += random.randint(1, 6)
+        new_x += str(random.randint(1, 6))
       else:
         new_x += individual[i]
 
     return new_x
 
+  def run(self, alpha, beta):
+    '''
+    一連の処理を実行
+    - @param {Array} alpha
+    - @param {Array} beta
+    '''
+    self.initialise(alpha=alpha, beta=beta)
+
+    for ite_i in range(self.ITERATE):
+      new_population = []
+
+      # エリート保存戦略
+      for i in range(0, self.ELITE_NUM):
+        new_population.append(copy.copy(self.population[i]))
+
+      # 交叉と突然変異
+      for i in range(self.ELITE_NUM, self.POP_NUM):
+        # 制約条件を満たすまで実行
+        while True:
+          crossover_target = self.select()
+          result = self.crossover(crossover_target[0], crossover_target[1])
+          result = self.mutate(result)
+          # 制約条件が全て0だったらループから抜ける
+          constraint = eval.evaluate(x_str=result, bias_alpha=alpha, bias_beta=beta, valiables=len(result), mode="constraint")
+          if constraint.count(0) == len(constraint):
+            # 新規解集団に追加
+            new_population.append({
+                'x': result,
+                'objective': eval.evaluate(x_str=result, bias_alpha=alpha, bias_beta=beta, valiables=len(result))
+            })
+            break
+
+      self.population = copy.copy(new_population)
+      # 評価値で昇順ソートしておく
+      self.population = sorted(self.population, key=lambda pop: pop['objective'])
+
+    return self.population[0]
+
 
 if __name__ == "__main__":
 
   sample = GenetictAlgorithm(
-      ITERATE=1000,
+      ITERATE=30,
       SOLUTION_SIZE=60,
       CROSSOVER_NUM=3
   )
-  sample.initialise(
+  result = sample.run(
       alpha=[2, 2, 2, 2, 2, 27, 5, 0, 0, 1, 0, 0, 1, 0, 0],
       beta=[5, 5, 5, 5, 5, 30, 8, 1, 0, 3, 0, 1, 2, 0, 0])
-
-  select = sample.select()
-  sample.crossover(select[0], select[1])
+  print(result)
