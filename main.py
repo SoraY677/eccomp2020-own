@@ -1,5 +1,6 @@
 import sys
 import copy
+import time
 from common import submitSolution, adjust
 from harmony_search import HarmonySearch
 
@@ -18,12 +19,14 @@ if __name__ == "__main__":
   # 探索手法定義
   search = HarmonySearch(
       SOL_LENGTH=SOLUTION_LENGTH,
-      ITERATION=10,
+      ITERATION=1000,
       HARMONY_NUM=10
   )
 
   # 解提出限界までループ
   for i in range(SEARCH_MAX):
+    # 時間計測
+    start = time.time()
 
     # 現条件で最も評価値の高い結果を算出
     solution = search.run(alpha=alpha, beta=beta)
@@ -51,6 +54,11 @@ if __name__ == "__main__":
     adjust_result = adjust(alpha=alpha, beta=beta, adjust_index=1)
     alpha = adjust_result["alpha"]
     beta = adjust_result["beta"]
+
+    end = time.time()
+
+    print("処理時間:")
+    print(end - start)
 
   print("======================================")
   print("[result]")
