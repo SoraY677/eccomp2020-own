@@ -134,7 +134,7 @@ class HarmonySearch:
         best = self.harmony_list[best_index].value["objective"]
 
     return {
-        "x": self.harmony_list[harmony_index].value["x"],
+        "x": self.harmony_list[best_index].value["x"],
         "objective": self.harmony_list[best_index].value["objective"]
     }
 
