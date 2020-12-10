@@ -2,10 +2,11 @@ import sys
 import copy
 import time
 from common import submitSolution, adjust
-from harmony_search import HarmonySearch
+from genetic_algorithm import GenetictAlgorithm
+# from harmony_search import HarmonySearch
 
-SOLUTION_LENGTH = 50  # 解の長さ
-SEARCH_MAX = 3  # 解提出回数の限界値
+SOLUTION_LENGTH = 840  # 解の長さ
+SEARCH_MAX = 1  # 解提出回数の限界値
 
 if __name__ == "__main__":
   # 最良値/ 初手はめちゃくちゃ大きくしておく
@@ -17,11 +18,18 @@ if __name__ == "__main__":
   alpha_tmp = copy.copy(alpha)
   beta_tmp = copy.copy(beta)
   # 探索手法定義
-  search = HarmonySearch(
-      SOL_LENGTH=SOLUTION_LENGTH,
-      ITERATION=1000,
-      HARMONY_NUM=10
+  # GA
+  search = GenetictAlgorithm(
+      ITERATE=30,
+      SOLUTION_SIZE=60,
+      CROSSOVER_NUM=3
   )
+  # ハーモニーサーチ
+  # search = HarmonySearch(
+  #     SOL_LENGTH=SOLUTION_LENGTH,
+  #     ITERATION=1000,
+  #     HARMONY_NUM=100
+  # )
 
   # 解提出限界までループ
   for i in range(SEARCH_MAX):
