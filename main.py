@@ -5,8 +5,8 @@ from common import submitSolution, adjust
 from genetic_algorithm import GenetictAlgorithm
 # from harmony_search import HarmonySearch
 
-SOLUTION_LENGTH = 840  # 解の長さ
-SEARCH_MAX = 1  # 解提出回数の限界値
+SOLUTION_LENGTH = 60  # 解の長さ
+SEARCH_MAX = 100  # 解提出回数の限界値
 
 if __name__ == "__main__":
   # 最良値/ 初手はめちゃくちゃ大きくしておく
@@ -20,9 +20,9 @@ if __name__ == "__main__":
   # 探索手法定義
   # GA
   search = GenetictAlgorithm(
-      ITERATE=30,
-      SOLUTION_SIZE=60,
-      CROSSOVER_NUM=3
+      ITERATE=100,
+      SOLUTION_SIZE=SOLUTION_LENGTH,
+      CROSSOVER_NUM=1
   )
   # ハーモニーサーチ
   # search = HarmonySearch(
@@ -30,6 +30,10 @@ if __name__ == "__main__":
   #     ITERATION=1000,
   #     HARMONY_NUM=100
   # )
+
+  vAlpha = [5, 6, 4, 3, 3, 27, 2, 0, 0, 0, 0, 0, 1, 0, 0]
+  vBeta = [20, 10, 6, 7, 8, 30, 4, 0, 2, 5, 0, 0, 4, 1, 1]
+  vGamma = [3, 3, 3, 3, 3, 1, 1, 3, 10, 4, 4, 4, 4, 4, 4]
 
   # 解提出限界までループ
   for i in range(SEARCH_MAX):
@@ -40,7 +44,7 @@ if __name__ == "__main__":
     solution = search.run(alpha=alpha, beta=beta)
 
     # 解を提出し、結果を取得
-    result = submitSolution(solution["x"])
+    result = submitSolution(x=solution["x"], vAlpha=vAlpha, vBeta=vBeta, vGamma=vGamma)
 
     # 結果をもとに、αβ値の反映
     # 悪い場合
@@ -59,7 +63,7 @@ if __name__ == "__main__":
     beta_tmp = copy.copy(beta)
 
     # αβ値を変更
-    adjust_result = adjust(alpha=alpha, beta=beta, adjust_index=1)
+    adjust_result = adjust(alpha=alpha, beta=beta, length=SOLUTION_LENGTH)
     alpha = adjust_result["alpha"]
     beta = adjust_result["beta"]
 

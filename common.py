@@ -1,5 +1,6 @@
 import evaluater as eval
 import copy
+import random
 
 '''
 汎用的な関数を管理
@@ -7,10 +8,10 @@ import copy
 
 
 def createVirtualResult(
-        x="",
-        vAlpha=[2, 2, 2, 2, 2, 27, 5, 0, 0, 1, 0, 0, 1, 0, 0],
-        vBeta=[5, 5, 5, 5, 5, 30, 8, 1, 0, 3, 0, 1, 2, 0, 0],
-        vGamma=[3, 3, 3, 3, 3, 1, 1, 3, 10, 4, 4, 4, 4, 4, 4]):
+        x,
+        vAlpha,
+        vBeta,
+        vGamma):
   '''
   仮設定から仮の結果を出力する
   - @param {String} x submitされた結果
@@ -24,19 +25,21 @@ def createVirtualResult(
   }
 
 
-def submitSolution(x):
+def submitSolution(x, vAlpha, vBeta, vGamma):
   '''
   解の提出
   - @param {String} x 解:"●●"
   - @return {Object} 結果のオブジェクト
   '''
   result = createVirtualResult(
-      x=x
-  )
+      x=x,
+      vAlpha=vAlpha,
+      vBeta=vBeta,
+      vGamma=vGamma)
   return result
 
 
-def adjust(alpha, beta, adjust_index):
+def adjust(alpha, beta, length):
   '''
   α,βを調整する処理
   @param {Array} alpha
@@ -47,9 +50,27 @@ def adjust(alpha, beta, adjust_index):
   newAlpha = copy.copy(alpha)
   newBeta = copy.copy(beta)
 
+  f_max = [
+      25 * length,
+      25 * length / 4,
+      25 * length / 4,
+      25 * length / 4,
+      25 * length / 4,
+      length - 1,
+      length - 1,
+      length - 2,
+      length - 3,
+      length - 4,
+      length - 5,
+      length - 4,
+      length - 5,
+      length - 6,
+      length - 7
+  ]
+  adjust_index = random.randint(0, 14)
   # 指定のindexのαβを指定の値に変更
-  newAlpha[adjust_index] = 0.8
-  newBeta[adjust_index] = 0.6
+  newBeta[adjust_index] = random.randint(0, f_max[adjust_index])
+  newAlpha[adjust_index] = random.randint(0, newAlpha[adjust_index])
 
   return {
       "alpha": newAlpha,
