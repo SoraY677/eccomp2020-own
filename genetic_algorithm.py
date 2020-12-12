@@ -32,7 +32,7 @@ class GenetictAlgorithm:
     self.CROSSOVER_NUM = CROSSOVER_NUM
     self.ELITE_NUM = ELITE_NUM
 
-  def initialise(self, alpha, beta):
+  def initialize(self, alpha, beta):
     '''
     初期化
     - @param {Array} alpha
@@ -139,7 +139,7 @@ class GenetictAlgorithm:
     - @param {Array} alpha
     - @param {Array} beta
     '''
-    self.initialise(alpha=alpha, beta=beta)
+    self.initialize(alpha=alpha, beta=beta)
 
     for ite_i in range(self.ITERATE):
       new_population = []
