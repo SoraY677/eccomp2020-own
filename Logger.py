@@ -1,4 +1,5 @@
 import os
+import codecs
 
 
 class Logger:
@@ -17,7 +18,7 @@ class Logger:
       os.mkdir(DIR_NAME)
 
     self.FILE_PATH = DIR_NAME + "/" + file_name
-    with open(self.FILE_PATH, mode='w') as f:
+    with codecs.open(self.FILE_PATH, 'w', 'utf_8') as f:
       f.write("")
 
   def writingLogFile(self, add_str):
@@ -25,8 +26,8 @@ class Logger:
     追記
     @param {*} add_str 追記内容
     '''
-    with open(self.FILE_PATH, mode='a') as f:
-      f.write(str(add_str) + "\n")
+    with codecs.open(self.FILE_PATH, 'a', 'utf_8') as f:
+      f.write(str(add_str))
     pass
 
 
