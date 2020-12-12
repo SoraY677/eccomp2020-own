@@ -150,19 +150,3 @@ class HarmonySearch:
     for harmony in self.harmony_list:
       print(harmony.value)
     print("-----------------------------")
-
-
-# 使用例
-if __name__ == "__main__":
-  sample = HarmonySearch(
-      SOL_LENGTH=50,
-      ITERATION=10000,
-      HARMONY_NUM=30
-  )
-  sample.show_result("origin")
-  result = sample.run(
-      alpha=[2, 2, 2, 2, 2, 27, 5, 0, 0, 1, 0, 0, 1, 0, 0],
-      beta=[5, 5, 5, 5, 5, 30, 8, 1, 0, 3, 0, 1, 2, 0, 0],)
-  sample.show_result("after")
-  print("最良解：")
-  print(result)

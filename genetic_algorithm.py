@@ -161,7 +161,7 @@ class GenetictAlgorithm:
             # 新規解集団に追加
             new_population.append({
                 'x': result,
-                'objective': eval.evaluate(x_str=result, bias_alpha=alpha, bias_beta=beta, valiables=len(result))
+                'objective': eval.evaluate(x_str=result, bias_alpha=alpha, bias_beta=beta, bias_gamma=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], valiables=len(result))
             })
             break
 
@@ -170,18 +170,3 @@ class GenetictAlgorithm:
       self.population = sorted(self.population, key=lambda pop: pop['objective'])
 
     return self.population[0]
-
-
-if __name__ == "__main__":
-  '''
-  使用例
-  '''
-  sample = GenetictAlgorithm(
-      ITERATE=30,
-      SOLUTION_SIZE=60,
-      CROSSOVER_NUM=3
-  )
-  result = sample.run(
-      alpha=[2, 2, 2, 2, 2, 27, 5, 0, 0, 1, 0, 0, 1, 0, 0],
-      beta=[5, 5, 5, 5, 5, 30, 8, 1, 0, 3, 0, 1, 2, 0, 0])
-  print(result)

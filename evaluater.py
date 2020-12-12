@@ -331,8 +331,3 @@ def evaluate(x_str="",
         'error': str(e)
     }
   return result
-
-
-if __name__ == "__main__":
-  evaluate()
-  sys.exit(1)

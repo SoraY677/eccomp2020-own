@@ -29,10 +29,3 @@ class Logger:
     with codecs.open(self.FILE_PATH, 'a', 'utf_8') as f:
       f.write(str(add_str))
     pass
-
-
-if __name__ == "__main__":
-  # お試し
-  sample = Logger("test.txt")
-  for i in range(10):
-    sample.writingLogFile(i + 1)
