@@ -39,6 +39,14 @@ def submitSolution(x, question_num):
   return result
 
 
+def submitJsonSolution(x, question_num):
+  with open("solution" + str(question_num) + ".json", "w") as f:
+    json.dump(x, f)  # Write a solution to the file
+  stdout = check_output("opt submit --match=" + str(question_num) + " --solution=solution" + str(question_num) + ".json", shell=True)  # Submit the solution
+  result = json.loads(stdout.decode("utf-8"))  # Convert a JSON string into dict
+  return result
+
+
 def submitVirtualSolution(x, vAlpha, vBeta, vGamma):
   '''
   解の提出
@@ -106,23 +114,6 @@ def adjust(alpha, beta, length, loop_count, search_max, MUTATE_PROB=0.05,):
 
       # 突然変異
   else:
-    f_max = [
-        25 * length,
-        25 * length / 4,
-        25 * length / 4,
-        25 * length / 4,
-        25 * length / 4,
-        length - 1,
-        length - 1,
-        length - 2,
-        length - 3,
-        length - 4,
-        length - 5,
-        length - 4,
-        length - 5,
-        length - 6,
-        length - 7
-    ]
     newBeta[adjust_index] = random.random() * f_max[adjust_index]
     newAlpha[adjust_index] = random.random() * f_max[adjust_index]
 
