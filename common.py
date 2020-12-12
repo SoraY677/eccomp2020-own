@@ -53,7 +53,7 @@ def submitVirtualSolution(x, vAlpha, vBeta, vGamma):
   return result
 
 
-def adjust(alpha, beta, length, loop_count, MUTATE_PROB=0.05):
+def adjust(alpha, beta, length, loop_count, search_max, MUTATE_PROB=0.05,):
   '''
   α,βを調整する処理
   @param {Array} alpha
@@ -64,6 +64,10 @@ def adjust(alpha, beta, length, loop_count, MUTATE_PROB=0.05):
   newAlpha = copy.copy(alpha)
   newBeta = copy.copy(beta)
 
+  # 修正対象のindex
+  adjust_index = random.randint(0, 14)
+
+  # 理論上のαβ最大値
   f_max = [
       25 * length,
       25 * length / 4,
@@ -82,9 +86,6 @@ def adjust(alpha, beta, length, loop_count, MUTATE_PROB=0.05):
       length - 7
   ]
 
-  # 修正対象のindex
-  adjust_index = random.randint(0, 14)
-
   # 通常時
   if(random.random() > MUTATE_PROB):
     # 0 の場合 1にする
@@ -94,10 +95,16 @@ def adjust(alpha, beta, length, loop_count, MUTATE_PROB=0.05):
       newAlpha[adjust_index] = 1
 
     # 指定のindexのαβを修正
-    newBeta[adjust_index] *= random.random() * (math.floor(loop_count / (length / 4)) + 1) * 2
-    newAlpha[adjust_index] *= random.random() * (math.floor(loop_count / (length / 4)) + 1) * 2
+    # math.floor(loop_count / (search_max / 4))
+    newAlpha[adjust_index] *= random.random() * 0.7 + 0.5 + 0.1 * math.floor(loop_count / (search_max / 4))  # 1.3 ~ 0.5 => 1.4 ~ 0.8
+    newBeta[adjust_index] *= random.random() * 0.7 + 0.7 - 0.1 * math.floor(loop_count / (search_max / 4))  # 1.5 ~ 0.7
 
-  # 突然変異
+    if newAlpha[adjust_index] > f_max[adjust_index]:
+      newAlpha[adjust_index] = f_max[adjust_index]
+    if newBeta[adjust_index] > f_max[adjust_index]:
+      newBeta[adjust_index] = f_max[adjust_index]
+
+      # 突然変異
   else:
     f_max = [
         25 * length,
