@@ -2,7 +2,7 @@ import sys
 import copy
 import time
 import math
-from common import submitSolution, adjust
+from common import submitVirtualSolution, adjust, submitSolution
 from genetic_algorithm import GenetictAlgorithm
 # from harmony_search import HarmonySearch
 from Logger import Logger
@@ -48,6 +48,7 @@ if __name__ == "__main__":
   # αβの一時退避先 / とりあえず同じものを入れておく
   alpha_tmp = copy.copy(alpha)
   beta_tmp = copy.copy(beta)
+
   # 探索手法定義
   # GA
   ITERATION = 100
@@ -67,18 +68,6 @@ if __name__ == "__main__":
       "- 突然変異率:" + str(MUTATE_PROB) + "\n" +
       "---\n"
   )
-  # ハーモニーサーチ
-  # search = HarmonySearch(
-  #     SOL_LENGTH=SOLUTION_LENGTH,
-  #     ITERATION=1000,
-  #     HARMONY_NUM=100
-  # )
-
-  base_vAlpha = [5, 6, 4, 3, 3, 27, 2, 0, 0, 0, 0, 0, 1, 0, 0]
-  vAlpha = [item * magnification for item in base_vAlpha]
-  base_vBeta = [20, 10, 6, 7, 8, 30, 4, 0, 2, 5, 0, 0, 4, 1, 1]
-  vBeta = [item * magnification for item in base_vBeta]
-  vGamma = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
   # 解提出限界までループ
   for i in range(SEARCH_MAX):
@@ -90,12 +79,8 @@ if __name__ == "__main__":
     # 現条件で最も評価値の高い結果を算出
     solution = search.run(alpha=alpha, beta=beta)
 
-    # 解を提出し、結果を取得
-    result = submitSolution(
-        x=solution["x"],
-        vAlpha=vAlpha,
-        vBeta=vBeta,
-        vGamma=vGamma)
+    result = submitSolution(x=int(solution["x"]), question_num=QUESTION_NUM)
+    print(result)
 
     # 結果をもとに、αβ値の反映
     # 悪い場合
@@ -115,7 +100,7 @@ if __name__ == "__main__":
     beta_tmp = copy.copy(beta)
 
     # αβ値を変更
-    adjust_result = adjust(alpha=alpha, beta=beta, length=SOLUTION_LENGTH, loop_count=i)
+    adjust_result = adjust(alpha=alpha, beta=beta, length=SOLUTION_LENGTH, loop_count=i, search_max=SEARCH_MAX)
     alpha = adjust_result["alpha"]
     beta = adjust_result["beta"]
 
@@ -126,7 +111,7 @@ if __name__ == "__main__":
     logger.writingLogFile(
         "## [" + str(i + 1) + "回目]\n" +
         "- α:" + str(alpha_tmp) + "\n" +
-        "- β" + str(beta_tmp) + "\n" +
+        "- β:" + str(beta_tmp) + "\n" +
         "- 結果:" + str(result) + "\n"
         "- 処理時間:" + str(end - start) + "\n"
         "---\n"
@@ -139,10 +124,8 @@ if __name__ == "__main__":
   print("処理時間:" + str(sys_end - sys_start))
   print("-----------------")
   print("alpha :" + str(alpha_tmp))
-  print("vAlpha : " + str(vAlpha))
   print("-----------------")
   print("beta :" + str(beta_tmp))
-  print("vBeta : " + str(vBeta))
   print("-----------------")
   print("solve")
   print("x:")
