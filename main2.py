@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
   # 探索手法定義
   # GA
-  ITERATION = 100
+  ITERATION = 10
   MUTATE_PROB = 0.01
   search = GenetictAlgorithm(
       ITERATE=ITERATION,
