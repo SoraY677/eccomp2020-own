@@ -4,8 +4,9 @@
 
 > EC-Comp2020 problem: Designing a random number sequence to entertain game players. This problem is an N-variable, M-objective, L-constraint problem of creating cognitively unbiased random number sequences.
 
-ゲームなどで用いられる乱数について完全にランダムにしていたとしても人間目ではそう感じないことがよくある。  
+ゲームなどで用いられる乱数について完全にランダムにしていたとしても人間目ではそう感じないことがよくある。      
 そのため、今回のコンペでは **「人間目で見て、より乱数っぽい乱数を生成する」** ことが目的である。  
+
 
 ## リンク系
 - [【公式サイト】](https://ec-comp.jpnsec.org/)
@@ -24,8 +25,12 @@ $ pip install -r requirements.txt
 
 ### common build
 
-```python3
-python exec.py
+```python
+# スクリプトから直接解提出
+python main.py
+
+# jsonに一度出力してから解提出
+python main2.py
 ```
 
 
